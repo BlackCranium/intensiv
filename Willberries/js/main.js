@@ -15,12 +15,10 @@ const buttonClose = document.querySelector('.modal-close');
 const modalCart = document.querySelector('#modal-cart');
 
 const openModal = function() {
-    console.log('-- давай корзину!');
     modalCart.classList.add('show');
 }
 
 const closeModal = function() {
-    console.log('-- спрячь корзину!');
     modalCart.classList.remove('show');
 }
 
@@ -30,7 +28,6 @@ buttonClose.addEventListener('click', closeModal);
 
 // ДЗ (день 1) закрытие корзины 
 document.querySelector('body').addEventListener('click', function(event) {
-    console.log(event.target);
     if (event.target.classList.contains('overlay')) {
         closeModal();
     }
