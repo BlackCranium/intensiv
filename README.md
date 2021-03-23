@@ -1,1 +1,1 @@
-# intensiv
+# Интенсив "Свой Вилберис на JavaScript"
