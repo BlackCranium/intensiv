@@ -56,39 +56,39 @@ modalCart.addEventListener('click', function(event) {
 // товарка
 
 const more = document.querySelector('.more'); // кнопка "View All"
+const acsessories = document.querySelector('.view-acsessories'); // кнопка "View All" на банере
+const clothing = document.querySelector('.view-clothing'); // кнопка "View All" на банере
 const navigationLinks = document.querySelectorAll('.navigation-link'); // Элементы меню
 const longGoodsList = document.querySelector('.long-goods-list'); // Товарная лента
 
-const getGoods = async function() {
-    urlDB = 'db/db.json';
+let urlDB = 'db/db.json';
 
-    const result = await fetch(urlDB);
+const getGoods = async function(url) {
+    const result = await fetch(url);
     if (!result.ok) {
         throw "Ошибочка: " + result.status;
     }
-    // console.log('getGoods Ok.');
     return result.json();
 }
 
-const createCard = function(objCard) {
+const createCard = function({ id, label, img, name, description, price, }) {
         const card = document.createElement('div');
         card.className = 'col-lg-3 col-sm-6';
 
         card.innerHTML = `
-                    <div class="goods-card">
-                        ${objCard.label?
-                        `<span class="label">${objCard.label}</span>`:``}
-                        <img src="db/${objCard.img}" alt="image: ${objCard.name}" class="goods-image">
-                        <h3 class="goods-title">${objCard.name}</h3>
-                        <p class="goods-description">${objCard.description}</p>
-                        <button class="button goods-card-btn add-to-cart" data-id="${objCard.id}">
-							<span class="button-price">$${objCard.price}</span>
-						</button>
-                    </div>
-    `;
-
-    //console.log(card);
-    return card;
+                <div class="goods-card">
+                    ${label?
+                    `<span class="label">${label}</span>`:
+                    ``}
+                    <img src="db/${img}" alt="image: ${name}" class="goods-image">
+                    <h3 class="goods-title">${name}</h3>
+                    <p class="goods-description">${description}</p>
+                    <button class="button goods-card-btn add-to-cart" data-id="${id}">
+                        <span class="button-price">$${price}</span>
+                    </button>
+                </div>
+        `;
+        return card;
 };
 
 const renderCards = function(data) {
@@ -96,9 +96,6 @@ const renderCards = function(data) {
 
     const cards = data.map(createCard);
 
-    // cards.forEach(function(card) {
-    //     longGoodsList.append(card);
-    // });
     longGoodsList.append(...cards);
 
     document.body.classList.add('show-goods');
@@ -106,8 +103,7 @@ const renderCards = function(data) {
 
 more.addEventListener('click', function(event){
     event.preventDefault;
-    
-    getGoods().then(renderCards);
+    getGoods(urlDB).then(renderCards);
 
     const id = scrollLinks[i].getAttribute('href');
     document.querySelector(id).scrollIntoView({
@@ -118,7 +114,7 @@ more.addEventListener('click', function(event){
 });
 
 const filterCards = function(field, value){
-    getGoods().then(function(data){
+    getGoods(urlDB).then(function(data){
         const filteredGoods = data.filter(function(good){
             return good[field]===value;
         });
@@ -130,12 +126,18 @@ const filterCards = function(field, value){
 navigationLinks.forEach(function(link){
     link.addEventListener('click', function(event){
         event.preventDefault;
-
-        console.log(link);
         const field = link.dataset.field;
         const value = link.textContent;
-        console.log(field);
-        console.log(value);
-        filterCards(field, value);
+        !field?filterCards():filterCards(field, value);
     });
+});
+
+acsessories.addEventListener('click', event=>{
+    event.preventDefault;
+    filterCards('category', 'Accessories');
+});
+
+clothing.addEventListener('click', event=>{
+    event.preventDefault;
+    filterCards('category', 'Clothing');
 });
